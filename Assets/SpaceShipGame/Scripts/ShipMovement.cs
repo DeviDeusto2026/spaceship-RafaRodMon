@@ -1,20 +1,25 @@
 using UnityEngine;
 
+/// <summary>
+/// Movimiento de nave — estilo coche espacial.
+///   W / S   → avanzar / retroceder
+///   A / D   → rotar sobre el eje Y (izquierda / derecha)
+///   Q / E   → subir / bajar
+/// Requiere Rigidbody con useGravity = false.
+/// </summary>
 [RequireComponent(typeof(Rigidbody))]
 public class ShipMovement : MonoBehaviour
 {
-    [Header("Velocidad de traslación")]
+    [Header("Traslación")]
     public float forwardSpeed = 12f;
-    public float strafeSpeed = 0f;    // pon > 0 si quieres movimiento lateral con A/D
     public float verticalSpeed = 8f;    // Q / E
 
-    [Header("Velocidad de rotación")]
-    public float yawSpeed = 90f;    // A/D  → girar izquierda/derecha
-    public float pitchSpeed = 60f;    // Mouse Y → cabecear
+    [Header("Rotación")]
+    public float yawSpeed = 90f;        // A / D → giro en Y
 
     [Header("Física")]
     public float linearDrag = 3f;
-    public float angularDrag = 6f;
+    public float angularDrag = 10f;
 
     private Rigidbody rb;
 
@@ -24,11 +29,8 @@ public class ShipMovement : MonoBehaviour
         rb.useGravity = false;
         rb.linearDamping = linearDrag;
         rb.angularDamping = angularDrag;
-    }
-
-    void Update()
-    {
-        HandleRotation();
+        // Evitar que la física voltee la nave
+        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
     }
 
     void FixedUpdate()
@@ -36,10 +38,14 @@ public class ShipMovement : MonoBehaviour
         HandleMovement();
     }
 
-    // ── Traslación ────────────────────────────────────────────────────────
+    void Update()
+    {
+        HandleRotation();
+    }
+
     void HandleMovement()
     {
-        float fwd = Input.GetAxis("Vertical");       // W = +1, S = -1
+        float fwd = Input.GetAxis("Vertical");   // W = +1, S = -1
         float upDown = 0f;
         if (Input.GetKey(KeyCode.E)) upDown = 1f;
         if (Input.GetKey(KeyCode.Q)) upDown = -1f;
@@ -50,15 +56,10 @@ public class ShipMovement : MonoBehaviour
         rb.AddForce(force, ForceMode.Acceleration);
     }
 
-    // ── Rotación ─────────────────────────────────────────────────────────
     void HandleRotation()
     {
-        // A/D → yaw (girar sobre el eje Y local de la nave)
+        // A = -1 → gira izquierda, D = +1 → gira derecha, solo en Y
         float yaw = Input.GetAxis("Horizontal") * yawSpeed * Time.deltaTime;
-
-        // Mouse → pitch (cabecear sobre el eje X local)
-        float pitch = -Input.GetAxis("Mouse Y") * pitchSpeed * Time.deltaTime;
-
-        transform.Rotate(pitch, yaw, 0f, Space.Self);
+        transform.Rotate(0f, yaw, 0f, Space.World);
     }
 }

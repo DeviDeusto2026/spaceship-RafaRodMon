@@ -1,21 +1,25 @@
 using UnityEngine;
 
+/// <summary>
+/// Disparo con dos cañones alternos.
+/// La dirección de la bala es siempre transform.forward de la NAVE,
+/// independientemente de cómo esté orientado el FirePoint.
+/// </summary>
 public class ShootingController : MonoBehaviour
 {
-    [Header("Cañones (orden: 0 = izquierdo, 1 = derecho)")]
-    public Transform[] firePoints = new Transform[2];  // arrastra FirePointL y FirePointR
+    [Header("Cañones (0 = izquierdo, 1 = derecho)")]
+    public Transform[] firePoints = new Transform[2];
 
     [Header("Bala")]
     public GameObject bulletPrefab;
-    public float fireRate = 0.15f;   // segundos entre disparos
+    public float fireRate = 0.15f;
 
     [Header("Bomba (Bonus)")]
     public GameObject bombPrefab;
     public int maxBombs = 3;
     public float bombCooldown = 1f;
 
-    // ── Estado interno ────────────────────────────────────────────────────
-    private int currentCannon = 0;     // 0 = izquierdo, 1 = derecho
+    private int currentCannon = 0;
     private float nextFireTime = 0f;
     private float nextBombTime = 0f;
     private int currentBombs;
@@ -27,14 +31,12 @@ public class ShootingController : MonoBehaviour
 
     void Update()
     {
-        // Clic izquierdo → disparo alterno
         if (Input.GetMouseButton(0) && Time.time >= nextFireTime)
         {
             nextFireTime = Time.time + fireRate;
             Shoot();
         }
 
-        // Clic derecho → bomba
         if (Input.GetMouseButtonDown(1) && Time.time >= nextBombTime && currentBombs > 0)
         {
             nextBombTime = Time.time + bombCooldown;
@@ -42,24 +44,30 @@ public class ShootingController : MonoBehaviour
         }
     }
 
-    // ── Disparo alterno ───────────────────────────────────────────────────
     void Shoot()
     {
         if (bulletPrefab == null) return;
-
-        // Seleccionar el cañón activo
         Transform fp = GetActiveFirePoint();
         if (fp == null) return;
 
-        Instantiate(bulletPrefab, fp.position, fp.rotation);
+        GameObject b = Instantiate(bulletPrefab, fp.position, Quaternion.identity);
+        Bullet bullet = b.GetComponent<Bullet>();
+        if (bullet != null)
+            bullet.SetDirection(transform.forward);
 
-        // Alternar al siguiente cañón: 0→1→0→1...
+        // Ignorar colisión física entre la bala y TODOS los colliders de la nave
+        Collider bulletCol = b.GetComponent<Collider>();
+        if (bulletCol != null)
+        {
+            foreach (Collider shipCol in GetComponentsInChildren<Collider>())
+                Physics.IgnoreCollision(bulletCol, shipCol, true);
+        }
+
         currentCannon = (currentCannon + 1) % firePoints.Length;
     }
 
     Transform GetActiveFirePoint()
     {
-        // Buscar el primer firePoint válido empezando por currentCannon
         for (int i = 0; i < firePoints.Length; i++)
         {
             int index = (currentCannon + i) % firePoints.Length;
@@ -69,18 +77,13 @@ public class ShootingController : MonoBehaviour
         return null;
     }
 
-    // ── Bomba ─────────────────────────────────────────────────────────────
     void LaunchBomb()
     {
         if (bombPrefab == null) return;
-
-        // La bomba sale del cañón activo en ese momento
         Transform fp = GetActiveFirePoint();
         if (fp == null) return;
-
         currentBombs--;
         Instantiate(bombPrefab, fp.position, fp.rotation);
-        Debug.Log($"Bombas restantes: {currentBombs}");
     }
 
     public int GetBombCount() => currentBombs;

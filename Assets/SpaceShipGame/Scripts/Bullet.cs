@@ -1,35 +1,81 @@
 using UnityEngine;
 
 /// <summary>
-/// Misión 02 — Bala del jugador
-/// Añade este script al prefab Bullet.
-/// El prefab debe tener Collider (Is Trigger = false) y Rigidbody (gravity = 0).
+/// Bala del jugador.
+/// - Ignora colisiones con el layer "Player" por código (doble seguro además de la Layer Matrix).
+/// - Usa trigger para detectar enemigos.
+/// - No tiene Rigidbody: se mueve por transform para evitar físicas no deseadas.
 /// </summary>
-[RequireComponent(typeof(Rigidbody))]
 public class Bullet : MonoBehaviour
 {
     [Header("Configuración")]
-    public float speed          = 15f;
-    public float maxLifetime    = 3f;    // auto-destrucción si no impacta 
+    public float speed = 80f;
+    public float maxLifetime = 3f;
+    public GameObject hitEffect;
+
+    private Vector3 direction;
+    private bool directionSet = false;
 
     void Start()
     {
-        GetComponent<Rigidbody>().useGravity = false;
+        // Añadir collider automáticamente si no tiene ninguno
+        if (GetComponent<Collider>() == null)
+        {
+            BoxCollider bc = gameObject.AddComponent<BoxCollider>();
+            bc.isTrigger = true;
+            bc.size = new Vector3(0.1f, 0.1f, 0.5f);
+        }
+
         Destroy(gameObject, maxLifetime);
+    }
+
+    public void SetDirection(Vector3 dir)
+    {
+        direction = dir.normalized;
+        directionSet = true;
+        if (dir != Vector3.zero)
+            transform.rotation = Quaternion.LookRotation(dir);
     }
 
     void Update()
     {
-        // Avanza hacia la derecha (dirección "adelante" en lateral 2.5D)
-        transform.Translate(transform.forward * speed * Time.deltaTime);
+        if (!directionSet) return;
+        transform.position += direction * speed * Time.deltaTime;
     }
 
-    void OnCollisionEnter(Collision collision)
+    void OnTriggerEnter(Collider other)
     {
-        // No reaccionar con el propio jugador
-        if (collision.gameObject.CompareTag("Player")) return;
+        // Ignorar al jugador por tag también (triple seguro)
+        if (other.CompareTag("Player")) return;
 
+        // Daño a enemigo normal
+        EnemyController ec = other.GetComponentInParent<EnemyController>();
+        if (ec != null)
+        {
+            ec.TakeDamage(1);
+            SpawnHitEffect();
+            Destroy(gameObject);
+            return;
+        }
 
+        // Daño al boss — buscar en el padre por si el collider está en un hijo
+        BossController bc = other.GetComponentInParent<BossController>();
+        if (bc != null)
+        {
+            bc.TakeDamage(1);
+            SpawnHitEffect();
+            Destroy(gameObject);
+            return;
+        }
+
+        // Impacto con cualquier otra cosa (escenario, planetas...)
+        SpawnHitEffect();
         Destroy(gameObject);
+    }
+
+    void SpawnHitEffect()
+    {
+        if (hitEffect != null)
+            Instantiate(hitEffect, transform.position, Quaternion.identity);
     }
 }

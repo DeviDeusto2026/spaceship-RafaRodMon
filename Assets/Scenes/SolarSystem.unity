@@ -1402,6 +1402,18 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 4.27
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &698035155
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 698035146}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00f95a39e72681f40b4410dab4b0ac85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CollisionDebug
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -3637,6 +3649,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1578558564194034, guid: 50d56e9319acd7440a97582160b01520, type: 3}
       insertIndex: -1
       addedObject: {fileID: 698035153}
+    - targetCorrespondingSourceObject: {fileID: 1578558564194034, guid: 50d56e9319acd7440a97582160b01520, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 698035155}
   m_SourcePrefab: {fileID: 100100000, guid: 50d56e9319acd7440a97582160b01520, type: 3}
 --- !u!1 &1807035985
 GameObject:

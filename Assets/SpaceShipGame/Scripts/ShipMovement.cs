@@ -36,7 +36,7 @@ public class ShipMovement : MonoBehaviour
 
     void HandleMovement()
     {
-        float fwd = Input.GetAxis("Vertical");   // W = +1, S = -1
+        float fwd = Input.GetAxis("Vertical");   
         float upDown = 0f;
         if (Input.GetKey(KeyCode.Space)) upDown = 1f;
         if (Input.GetKey(KeyCode.LeftShift)) upDown = -1f;
@@ -49,7 +49,6 @@ public class ShipMovement : MonoBehaviour
 
     void HandleRotation()
     {
-        // A = -1 → gira izquierda, D = +1 → gira derecha, solo en Y
         float yaw = Input.GetAxis("Horizontal") * yawSpeed * Time.deltaTime;
         transform.Rotate(0f, yaw, 0f, Space.World);
     }

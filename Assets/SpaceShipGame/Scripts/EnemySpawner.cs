@@ -1,11 +1,6 @@
 using UnityEngine;
 using TMPro;
 
-/// <summary>
-/// Spawner de enemigos con:
-/// - Boss spawneado lejos del jugador
-/// - Contador de enemigos restantes en HUD
-/// </summary>
 public class EnemySpawner : MonoBehaviour
 {
     public GameObject enemyPrefab;

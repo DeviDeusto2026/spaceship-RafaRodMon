@@ -1,11 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// Bala del jugador.
-/// - Ignora colisiones con el layer "Player" por código (doble seguro además de la Layer Matrix).
-/// - Usa trigger para detectar enemigos.
-/// - No tiene Rigidbody: se mueve por transform para evitar físicas no deseadas.
-/// </summary>
 public class Bullet : MonoBehaviour
 {
     [Header("Configuración")]
@@ -46,7 +40,6 @@ public class Bullet : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        // Ignorar al jugador por tag también (triple seguro)
         if (other.CompareTag("Player")) return;
 
         // Daño a enemigo normal
@@ -59,7 +52,7 @@ public class Bullet : MonoBehaviour
             return;
         }
 
-        // Daño al boss — buscar en el padre por si el collider está en un hijo
+        // Daño al boss
         BossController bc = other.GetComponentInParent<BossController>();
         if (bc != null)
         {

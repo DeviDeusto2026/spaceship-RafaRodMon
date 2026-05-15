@@ -1,10 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// BONUS — Bomba de área
-/// Añade este script al prefab Bomb.
-/// Avanza hacia la derecha, explota tras N segundos y destruye TODOS los enemigos en pantalla.
-/// </summary>
 public class Bomb : MonoBehaviour
 {
     private Vector3 direction;
@@ -38,7 +33,6 @@ public class Bomb : MonoBehaviour
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         foreach (GameObject enemy in enemies)
         {
-            // Intentar reproducir efecto de muerte si tienen uno
             EnemyController ec = enemy.GetComponent<EnemyController>();
             if (ec != null)
             {
@@ -47,7 +41,6 @@ public class Bomb : MonoBehaviour
             }
             else
             {
-                // Fallback: destruir directamente (sirve para el Boss también)
                 BossController bc = enemy.GetComponent<BossController>();
                 if (bc != null)
                     bc.TakeDamage(4);

@@ -1,10 +1,6 @@
 using UnityEngine;
 
-/// <summary>
-/// Bala del Boss — funciona igual que la bala del jugador.
-/// Se mueve en la dirección asignada por SetDirection().
-/// Tag: "EnemyBullet"
-/// </summary>
+
 public class BossBullet : MonoBehaviour
 {
     public float speed = 20f;
@@ -43,6 +39,7 @@ public class BossBullet : MonoBehaviour
         directionSet = true;
         if (dir != Vector3.zero)
             transform.rotation = Quaternion.LookRotation(dir);
+        transform.Rotate(90f, 0f, 0f, Space.Self);
     }
 
     void Update()

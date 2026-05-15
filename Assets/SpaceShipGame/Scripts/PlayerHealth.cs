@@ -5,14 +5,11 @@ using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour
 {
-    [Header("Vidas")]
     public int maxLives = 3;
 
-    [Header("Invencibilidad tras recibir daño")]
     public float invincibleDuration = 1.5f;
 
-    [Header("Corazones UI")]
-    public Image[] heartImages = new Image[3]; // arrastra los 3 en el Inspector
+    public Image[] heartImages = new Image[3]; 
 
     private EnemyController enemy;
 
@@ -52,13 +49,11 @@ public class PlayerHealth : MonoBehaviour
         {
             if (heartImages[i] != null)
                 heartImages[i].color = i < currentLives
-                    ? Color.white                          // vida activa → visible
-                    : new Color(1f, 1f, 1f, 0.15f);       // vida perdida → transparente
+                    ? Color.white                         
+                    : new Color(1f, 1f, 1f, 0.15f);       
         }
     }
 
-
-    // ── Daño y muerte ──────────────────────────────────────────────────────
     public void TakeDamage(int amount = 1)
     {
         if (isInvincible) return;

@@ -1,20 +1,13 @@
 using UnityEngine;
 
-/// <summary>
-/// Disparo con dos cañones alternos.
-/// La dirección de la bala es siempre transform.forward de la NAVE,
-/// independientemente de cómo esté orientado el FirePoint.
-/// </summary>
 public class ShootingController : MonoBehaviour
 {
-    [Header("Cañones (0 = izquierdo, 1 = derecho)")]
+
     public Transform[] firePoints = new Transform[2];
 
-    [Header("Bala")]
     public GameObject bulletPrefab;
     public float fireRate = 0.15f;
 
-    [Header("Bomba (Bonus)")]
     public GameObject bombPrefab;
     public int maxBombs = 3;
     public float bombCooldown = 1f;
@@ -83,7 +76,11 @@ public class ShootingController : MonoBehaviour
         Transform fp = GetActiveFirePoint();
         if (fp == null) return;
         currentBombs--;
-        Instantiate(bombPrefab, fp.position, fp.rotation);
+
+        GameObject b = Instantiate(bombPrefab, fp.position, Quaternion.identity);
+        Bomb bomb = b.GetComponent<Bomb>();
+        if (bomb != null)
+            bomb.SetDirection(transform.forward);
     }
 
     public int GetBombCount() => currentBombs;

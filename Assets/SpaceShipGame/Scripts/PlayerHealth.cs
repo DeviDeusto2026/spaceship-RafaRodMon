@@ -1,13 +1,8 @@
-using NUnit.Framework.Constraints;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-/// <summary>
-/// Sistema de vidas con Canvas de corazones.
-/// Crea el Canvas y los corazones automáticamente, no necesitas montar nada en el Editor.
-/// Añade este script a la nave del jugador.
-/// </summary>
+
 public class PlayerHealth : MonoBehaviour
 {
     [Header("Vidas")]
@@ -37,6 +32,7 @@ public class PlayerHealth : MonoBehaviour
 
     void Start()
     {
+        UpdateHeartsUI();
     }
 
     void Update()

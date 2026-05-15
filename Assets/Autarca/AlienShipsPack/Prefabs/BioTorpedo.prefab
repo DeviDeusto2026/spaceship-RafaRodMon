@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 33959892086348258}
   - component: {fileID: 23197084716274270}
   - component: {fileID: -5461565123953711956}
-  - component: {fileID: -2042723624001004373}
   m_Layer: 0
   m_Name: BioTorpedo
   m_TagString: Enemy
@@ -108,20 +107,7 @@ MonoBehaviour:
   speed: 1
   maxHealth: 3
   deathEffect: {fileID: 0}
-  healthBar: {fileID: 0}
---- !u!114 &-2042723624001004373
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1906374043378120}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0cc9f2c338cd0f940901196f6efbbc2b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealthUI
-  slider: {fileID: 8650523763608912445}
+  healthBar: {fileID: 8650523763608912445}
 --- !u!1 &83824947802453069
 GameObject:
   m_ObjectHideFlags: 0
@@ -434,7 +420,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8933997302369966761}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.001, y: 0.003, z: 0.005}
   m_ConstrainProportionsScale: 0

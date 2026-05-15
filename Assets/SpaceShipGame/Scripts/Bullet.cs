@@ -35,6 +35,7 @@ public class Bullet : MonoBehaviour
         directionSet = true;
         if (dir != Vector3.zero)
             transform.rotation = Quaternion.LookRotation(dir);
+        transform.Rotate(90f, 0f, 0f, Space.Self);
     }
 
     void Update()

@@ -1,12 +1,7 @@
 using UnityEngine;
+using UnityEngine.UI;
 
-/// <summary>
-/// Enemigo normal — persigue al jugador, recibe daño por trigger.
-/// Requiere:
-///   - Tag: "Enemy"
-///   - Un Collider en el prefab (cualquier tipo, Is Trigger = true)
-///   - El jugador con tag "Player"
-/// </summary>
+
 public class EnemyController : MonoBehaviour
 {
     [Header("Movimiento")]
@@ -17,7 +12,7 @@ public class EnemyController : MonoBehaviour
 
     [Header("Efectos")]
     public GameObject deathEffect;
-    public EnemyHealthUI healthBar;
+    public Slider healthBar;  
 
     private Transform player;
     private int currentHealth;
@@ -25,6 +20,12 @@ public class EnemyController : MonoBehaviour
     void Start()
     {
         currentHealth = maxHealth;
+        
+        if (healthBar != null)
+        {
+            healthBar.maxValue = maxHealth;
+            healthBar.value = maxHealth;
+        }
 
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
@@ -65,15 +66,16 @@ public class EnemyController : MonoBehaviour
     {
         currentHealth -= amount;
         if (healthBar != null)
-            healthBar.UpdateHealth(currentHealth, maxHealth);
+            healthBar.value = currentHealth;
         Debug.Log($"{gameObject.name} recibe {amount} de daño. Vida restante: {currentHealth}");
         if (currentHealth <= 0) Die();
     }
 
     void Die()
     {
-        if (deathEffect != null)
-            Instantiate(deathEffect, transform.position, Quaternion.identity);
+        // Notificar victoria
+        if (VictoryManager.Instance != null)
+            VictoryManager.Instance.OnEnemyKilled(); 
         Destroy(gameObject);
     }
 

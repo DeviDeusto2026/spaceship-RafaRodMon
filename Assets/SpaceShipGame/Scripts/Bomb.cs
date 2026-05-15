@@ -7,12 +7,12 @@ using UnityEngine;
 /// </summary>
 public class Bomb : MonoBehaviour
 {
-    [Header("Movimiento")]
+    private Vector3 direction;
+    private bool directionSet = false;
+
     public float speed = 6f;
 
-    [Header("Explosión")]
-    public float fuseTime       = 3f;    // segundos antes de explotar
-    public GameObject explosionEffect;   // efecto de partículas opcional
+    public float fuseTime       = 3f;    
 
     void Start()
     {
@@ -21,15 +21,18 @@ public class Bomb : MonoBehaviour
 
     void Update()
     {
-        // Avanza hacia la derecha (igual que las balas)
-        transform.Translate(Vector3.right * speed * Time.deltaTime);
+        if (!directionSet) return;
+        transform.position += direction * speed * Time.deltaTime;
+    }
+
+    public void SetDirection(Vector3 dir)
+    {
+        direction = dir.normalized;
+        directionSet = true;
     }
 
     void Explode()
     {
-        // Efecto visual
-        if (explosionEffect != null)
-            Instantiate(explosionEffect, transform.position, Quaternion.identity);
 
         // Destruir TODOS los enemigos en escena
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
@@ -40,14 +43,14 @@ public class Bomb : MonoBehaviour
             if (ec != null)
             {
                 // Llamar TakeDamage con un valor alto para matarlos
-                ec.TakeDamage(999);
+                ec.TakeDamage(4);
             }
             else
             {
                 // Fallback: destruir directamente (sirve para el Boss también)
                 BossController bc = enemy.GetComponent<BossController>();
                 if (bc != null)
-                    bc.TakeDamage(999);
+                    bc.TakeDamage(4);
                 else
                     Destroy(enemy);
             }

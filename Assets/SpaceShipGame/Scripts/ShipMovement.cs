@@ -1,23 +1,14 @@
 using UnityEngine;
 
-/// <summary>
-/// Movimiento de nave — estilo coche espacial.
-///   W / S   → avanzar / retroceder
-///   A / D   → rotar sobre el eje Y (izquierda / derecha)
-///   Q / E   → subir / bajar
-/// Requiere Rigidbody con useGravity = false.
-/// </summary>
+
 [RequireComponent(typeof(Rigidbody))]
 public class ShipMovement : MonoBehaviour
 {
-    [Header("Traslación")]
     public float forwardSpeed = 12f;
-    public float verticalSpeed = 8f;    // Q / E
+    public float verticalSpeed = 8f;    
 
-    [Header("Rotación")]
-    public float yawSpeed = 90f;        // A / D → giro en Y
+    public float yawSpeed = 90f;        
 
-    [Header("Física")]
     public float linearDrag = 3f;
     public float angularDrag = 10f;
 
@@ -47,8 +38,8 @@ public class ShipMovement : MonoBehaviour
     {
         float fwd = Input.GetAxis("Vertical");   // W = +1, S = -1
         float upDown = 0f;
-        if (Input.GetKey(KeyCode.E)) upDown = 1f;
-        if (Input.GetKey(KeyCode.Q)) upDown = -1f;
+        if (Input.GetKey(KeyCode.Space)) upDown = 1f;
+        if (Input.GetKey(KeyCode.LeftShift)) upDown = -1f;
 
         Vector3 force = transform.forward * fwd * forwardSpeed
                       + transform.up * upDown * verticalSpeed;

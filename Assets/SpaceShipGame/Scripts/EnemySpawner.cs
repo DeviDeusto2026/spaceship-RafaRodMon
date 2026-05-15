@@ -1,25 +1,26 @@
 using UnityEngine;
+using TMPro;
 
 /// <summary>
-/// Spawner de enemigos — instancia en la posición del propio GameObject.
-/// Coloca este GameObject donde quieras que aparezcan los enemigos.
-/// Para múltiples puntos de spawn, crea varios GameObjects con este script.
+/// Spawner de enemigos con:
+/// - Boss spawneado lejos del jugador
+/// - Contador de enemigos restantes en HUD
 /// </summary>
 public class EnemySpawner : MonoBehaviour
 {
-    [Header("Enemigo normal")]
     public GameObject enemyPrefab;
     public float spawnInterval = 2f;
+    public float spawnRadius = 2f;
 
-    [Header("Dispersión aleatoria alrededor del spawner")]
-    public float spawnRadius = 2f;   // 0 = exactamente en el punto, >0 = con dispersión
-
-    [Header("Boss")]
     public GameObject bossPrefab;
     public int enemiesBeforeBoss = 10;
+    public float bossSpawnDistance = 40f;  
+
+    public TextMeshProUGUI counterText;  
 
     private int enemiesSpawned = 0;
     private bool bossSpawned = false;
+    private Transform player;
 
     public static EnemySpawner Instance { get; private set; }
 
@@ -27,6 +28,10 @@ public class EnemySpawner : MonoBehaviour
 
     void Start()
     {
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null) player = playerObj.transform;
+
+        UpdateCounterUI();
         InvokeRepeating(nameof(SpawnEnemy), 1f, spawnInterval);
     }
 
@@ -34,13 +39,14 @@ public class EnemySpawner : MonoBehaviour
     {
         if (bossSpawned || enemyPrefab == null) return;
 
-        // Spawn en la posición del spawner + dispersión aleatoria
         Vector3 offset = Random.insideUnitSphere * spawnRadius;
-        offset.z = 0f; // mantener en el mismo plano si lo necesitas
+        offset.z = 0f;
         Vector3 spawnPos = transform.position + offset;
 
         Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
         enemiesSpawned++;
+
+        UpdateCounterUI();
 
         if (enemiesSpawned >= enemiesBeforeBoss)
             SpawnBoss();
@@ -51,14 +57,44 @@ public class EnemySpawner : MonoBehaviour
         if (bossPrefab == null) return;
         bossSpawned = true;
         CancelInvoke(nameof(SpawnEnemy));
-        Instantiate(bossPrefab, transform.position, Quaternion.identity);
-        Debug.Log("¡Boss spawneado!");
+
+        // Calcular posición lejos del jugador
+        Vector3 spawnPos;
+        if (player != null)
+        {
+           spawnPos = new Vector3(
+            player.position.x + bossSpawnDistance,
+            player.position.y,                       
+            player.position.z + bossSpawnDistance   
+       );
+        }
+        else
+        {
+            spawnPos = transform.position;
+        }
+
+        Instantiate(bossPrefab, spawnPos, Quaternion.identity);
+        Debug.Log($"¡Boss spawneado a {bossSpawnDistance} unidades del jugador!");
+
+        // Actualizar HUD al spawnear boss
+        if (counterText != null)
+            counterText.text = "⚠ BOSS ⚠";
+    }
+
+    void UpdateCounterUI()
+    {
+        if (counterText == null) return;
+        int remaining = enemiesBeforeBoss - enemiesSpawned;
+        counterText.text = remaining > 0
+            ? $"Enemigos para el Boss: {remaining}"
+            : "¡Boss en camino!";
     }
 
     public void ResumeSpawning()
     {
         bossSpawned = false;
         enemiesSpawned = 0;
+        UpdateCounterUI();
         InvokeRepeating(nameof(SpawnEnemy), 1f, spawnInterval);
     }
 }

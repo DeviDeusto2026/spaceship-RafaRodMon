@@ -17,6 +17,7 @@ public class EnemyController : MonoBehaviour
 
     [Header("Efectos")]
     public GameObject deathEffect;
+    public EnemyHealthUI healthBar;
 
     private Transform player;
     private int currentHealth;
@@ -63,6 +64,8 @@ public class EnemyController : MonoBehaviour
     public void TakeDamage(int amount = 1)
     {
         currentHealth -= amount;
+        if (healthBar != null)
+            healthBar.UpdateHealth(currentHealth, maxHealth);
         Debug.Log($"{gameObject.name} recibe {amount} de daño. Vida restante: {currentHealth}");
         if (currentHealth <= 0) Die();
     }

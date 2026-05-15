@@ -1,3 +1,4 @@
+using NUnit.Framework.Constraints;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -17,6 +18,8 @@ public class PlayerHealth : MonoBehaviour
 
     [Header("Corazones UI")]
     public Image[] heartImages = new Image[3]; // arrastra los 3 en el Inspector
+
+    private EnemyController enemy;
 
     // Estado
     private int currentLives;
@@ -100,7 +103,14 @@ public class PlayerHealth : MonoBehaviour
         if (other.CompareTag("EnemyBullet") || other.CompareTag("Enemy"))
         {
             TakeDamage(1);
-            Destroy(other.gameObject);
+            if (!(other.CompareTag("Enemy") && enemy.maxHealth > 5))
+            {
+                
+            }
+            else
+            {
+                Destroy(other.gameObject);
+            }
         }
     }
 
